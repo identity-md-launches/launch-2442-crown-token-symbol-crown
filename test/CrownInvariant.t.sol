@@ -26,7 +26,7 @@ contract GameHandler is Test {
     IPoolManager public immutable manager;
     PoolRouter public immutable router;
     uint256 public immutable firstDay;
-    PoolKey private key;
+    PoolKey internal key;
     address[3] public actors;
     mapping(uint256 => ExpectedDay) public expected;
     uint256 public collected;
@@ -60,10 +60,20 @@ contract GameHandler is Test {
             buy ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1
         );
         uint256 walletBefore = actor.balance;
-        uint256 managerBefore = address(manager).balance;
+        uint256 managerBefore = _poolETH();
         vm.prank(actor, actor);
         router.swap{value: buy ? maxInput : 0}(key, params, maxInput, 0, "");
-        uint256 base = buy ? address(manager).balance - managerBefore : managerBefore - address(manager).balance;
+        _recordTrade(actor, buy, walletBefore, managerBefore);
+    }
+
+    /// @dev Remove the manager's debt to the hook from its cash. This measures pool ETH
+    /// independently of whether a fee was taken, minted as a credit, or redeemed mid-swap.
+    function _poolETH() internal view returns (uint256) {
+        return address(manager).balance - manager.balanceOf(address(hook), 0);
+    }
+
+    function _recordTrade(address actor, bool buy, uint256 walletBefore, uint256 managerBefore) internal {
+        uint256 base = buy ? _poolETH() - managerBefore : managerBefore - _poolETH();
         uint256 fee;
         if (buy) {
             uint256 gross = walletBefore - actor.balance;
@@ -118,7 +128,7 @@ contract GameHandler is Test {
 contract CrownInvariantTest is CrownFixture {
     GameHandler internal handler;
 
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
         handler = new GameHandler(hook, token, manager, router, key);
         for (uint256 i; i < 3; ++i) {
