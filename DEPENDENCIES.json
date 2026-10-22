@@ -1,0 +1,34 @@
+[
+  {
+    "repository": "Uniswap/v4-core",
+    "commit": "46c6834698c48bc4a463a86d8420f4eb1d7f3b75",
+    "directory": "lib/v4-core",
+    "archive_sha256": "669c7c7903378bfd327072982008c447517c55b03d6ff1cb7bd9a7f04b6e47eb",
+    "files": 84
+  },
+  {
+    "repository": "foundry-rs/forge-std",
+    "commit": "77041d2ce690e692d6e03cc812b57d1ddaa4d505",
+    "directory": "lib/forge-std",
+    "archive_sha256": "a387f7c2a10387f889b0d18b999cfa667a5273ac11cc11e18923022eb8b24bc3",
+    "files": 30
+  },
+  {
+    "repository": "OpenZeppelin/openzeppelin-contracts",
+    "commit": "acd4ff74de833399287ed6b31b4debf6b2b35527",
+    "directory": "lib/openzeppelin-contracts",
+    "archive_sha256": "7ca6287b8a0d0db67b5923c047365025e612dbaf58a49cbe74d05aa5213e36f9",
+    "files": 290
+  },
+  {
+    "repository": "transmissions11/solmate",
+    "commit": "4b47a19038b798b4a33d9749d25e570443520647",
+    "directory": "lib/solmate",
+    "files": [
+      "src/auth/Owned.sol",
+      "src/tokens/ERC20.sol",
+      "src/test/utils/mocks/MockERC20.sol",
+      "LICENSE"
+    ]
+  }
+]
