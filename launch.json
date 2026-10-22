@@ -1,0 +1,30 @@
+{
+  "kind": "univ4_hook",
+  "hook": {
+    "contract": "CrownHook",
+    "constructorArgs": [
+      "$poolManager",
+      "$token"
+    ],
+    "permissions": [
+      "beforeInitialize",
+      "beforeSwap",
+      "afterSwap",
+      "beforeSwapReturnDelta",
+      "afterSwapReturnDelta"
+    ]
+  },
+  "token": {
+    "contract": "Crown",
+    "name": "Crown",
+    "symbol": "CROWN",
+    "decimals": 18
+  },
+  "pool": {
+    "pairedCurrency": "0x0000000000000000000000000000000000000000",
+    "fee": 12500,
+    "tickSpacing": 60,
+    "initialPrice": "79228162514264337593543950336"
+  },
+  "notes": "CrownHook implements CROWN's daily largest-buy game for its native ETH/Crown Uniswap v4 pool on Ethereum mainnet. beforeInitialize accepts only the configured token, native ETH, LP fee 12500, tick spacing 60 and this hook. All enabled callbacks require the immutable PoolManager. Initialization of the correct key is permissionless; deployment and initialization are atomic in the launch factory. The listed initialPrice is the required manifest value; the deployer derives the opening price from launch policy. The hook charges 2% of the settled gross ETH side, rounded down to wei, on buys and sells in exact-input and exact-output modes, including partial fills. This is additional to the 1.25% LP fee. Every hook fee enters the execution day's pot; none goes to an owner, team or maintenance caller. ETH-specified swaps use a reverting preview and beforeSwapReturnDelta; the other modes use afterSwapReturnDelta. A day is block.timestamp / 86400. A positive buy crowns tx.origin only when its ETH paid into the pool after the hook fee strictly exceeds biggestBuy; ties retain the earlier buyer and sells never crown anyone. Only the king, authenticated by msg.sender, can claim an ended day's entire pot, once, via an ETH call; a failed transfer reverts the claim. Day d is claimable from (d+1)*86400 inclusive to (d+8)*86400 exclusive. Anyone can then roll its unclaimed pot into the current day. A kingless day can roll immediately after it ends. Claim and rollover both zero the source pot and mark claimed true. Views are currentDay(), dayInfo(day) returning (king, biggestBuy, pot, claimed), and claimable(day). Fees are taken into the hook as native ETH when PoolManager has sufficient ETH. Otherwise the hook records pending native-currency ERC-6909 credits on PoolManager, so some pot backing remains there until redeemed. Later swaps, permissionless redeemFees(), or claim when needed redeem those credits into the hook; only claim pays ETH out of the hook. No owner, admin, setters, pause, upgrades, external oracles or post-construction token minting exist. Crown has no constructor arguments. CrownHook takes only PoolManager and the launch token, in that order."
+}
